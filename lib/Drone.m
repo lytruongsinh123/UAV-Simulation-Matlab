@@ -230,73 +230,53 @@ classdef Drone < handle
 
             
         end
-        function obj = PositionCtrl(obj, positionSig)
 
+        function obj = PositionCtrl(obj, positionSig)
             %% DESIRED POSITION
             x_des = positionSig(1);
             y_des = positionSig(2);
             z_des = positionSig(3);
-        
             %% POSITION ERROR
             ex = x_des - obj.r(1);
             ey = y_des - obj.r(2);
             ez = z_des - obj.r(3);
-        
             %% VELOCITY ERROR
             evx = -obj.dr(1);
             evy = -obj.dr(2);
             evz = -obj.dr(3);
-        
             %% PD POSITION CONTROLLER
             ax_cmd = obj.kP_x * ex + obj.kD_x * evx;
             ay_cmd = obj.kP_y * ey + obj.kD_y * evy;
             az_cmd = obj.kP_z * ez + obj.kD_z * evz;
-        
             %% ACCELERATION SATURATION
             ax_cmd = max(min(ax_cmd, obj.maxAccelXY), -obj.maxAccelXY);
             ay_cmd = max(min(ay_cmd, obj.maxAccelXY), -obj.maxAccelXY);
             az_cmd = max(min(az_cmd, obj.maxAccelZ), -obj.maxAccelZ);
-        
             %% DESIRED ACCELERATION
             a_cmd = [ax_cmd;
                      ay_cmd;
                      az_cmd];
-        
             %% DESIRED THRUST DIRECTION
             thrust_vec = [0;
                           0;
                           obj.g] - a_cmd;
-        
             %% THRUST MAGNITUDE
             T_des = obj.m * norm(thrust_vec);
-        
             %% DESIRED BODY Z AXIS IN WORLD FRAME
             b3_des = thrust_vec / norm(thrust_vec);
-        
-            %% CURRENT YAW
-            obj.psi_des = obj.euler(3);
-        
             %% DESIRED ROLL / PITCH
             obj.phi_des = atan2( ...
                 -b3_des(2), ...
                  b3_des(3));
-        
             obj.theta_des = atan2( ...
                  b3_des(1), ...
                  sqrt(b3_des(2)^2 + b3_des(3)^2));
-        
+            obj.psi_des = obj.euler(3);
             %% ANGLE SATURATION
             obj.phi_des = max(min(obj.phi_des, obj.maxTilt), -obj.maxTilt);
             obj.theta_des = max(min(obj.theta_des, obj.maxTilt), -obj.maxTilt);
-        
-            %% SEND COMMAND TO ATTITUDE CONTROLLER
-            obj.phi_des = obj.phi_des;
-            obj.theta_des = obj.theta_des;
-            obj.psi_des = obj.psi_des;
-        
-            %% Z VELOCITY COMMAND
-            obj.zdot_des = -obj.dr(3);
-        
+            %% Z VELOCITY Z COMMAND
+            obj.zdot_des = obj.kP_z * ez + obj.kD_z * evz;
             %% THRUST
             obj.T = T_des;
         

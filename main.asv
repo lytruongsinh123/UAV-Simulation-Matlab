@@ -106,7 +106,7 @@ title('zdot[m/s]');
 grid on;
 hold on;
 
-subplot(2,4,7);
+subplot(2,3,7);
 title('z[m]');
 grid on;
 hold on;
@@ -155,29 +155,21 @@ for i = 1:simulationTime/0.01
         'YData', drone1_state(2), ...
         'ZData', 0);
     %% Data Plot
-    figure(2) 
-
-    subplot(2,4,1)
-        plot(i/100,drone1_state(7)*R2D,'.'); 
-    
-    subplot(2,4,2)
-        plot(i/100,drone1_state(8)*R2D,'.');     
-    
-    subplot(2,4,3)
-        plot(i/100,drone1_state(9)*R2D,'.'); 
-    
-    subplot(2,4,4)
-        plot(i/100,drone1_state(1),'.'); 
-    
-    subplot(2,4,5)
-        plot(i/100,drone1_state(2),'.'); 
-    
-    subplot(2,4,6)
-        plot(i/100,drone1_state(6),'.'); 
-    
-    subplot(2,4,7)
-        plot(i/100,drone1_state(3),'.'); 
-    
+    figure(2)
+    subplot(2,3,1)
+        plot(i/100,drone1_state(7)*R2D,'.');
+    subplot(2,3,2)
+        plot(i/100,drone1_state(8)*R2D,'.');    
+    subplot(2,3,3)
+        plot(i/100,drone1_state(9)*R2D,'.');
+    subplot(2,3,4)
+        plot(i/100,drone1_state(1),'.');
+    subplot(2,3,5)
+        plot(i/100,drone1_state(2),'.');
+    subplot(2,3,6)
+        plot(i/100,drone1_state(6),'.');
+    subplot(2,3,7)
+        plot(i/100,drone1_state(3),'.');
     drawnow;
     %% BREAK WHEN CRASH
     if (drone1_state(3) >= 0)
